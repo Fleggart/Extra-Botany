@@ -1,16 +1,16 @@
 package com.meteor.extrabotany.common.item.equipment.bauble;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
 import com.meteor.extrabotany.api.item.IAdvancementRequired;
 import com.meteor.extrabotany.common.core.network.ExtraBotanyNetwork;
 import com.meteor.extrabotany.common.core.network.PacketLeftClickJingwei;
 import com.meteor.extrabotany.common.entity.EntityAuraFire;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
 import com.meteor.extrabotany.common.lib.LibItemsName;
+
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -53,7 +53,8 @@ public class ItemJingweiFeather extends ItemBauble implements IAdvancementRequir
 	}
 
 	@Override
-	public ResourceLocation getRequiredAdvancementId(ItemStack stack) {
-		return LibAdvancements.JINGWEI_FEATHER_ID;
+	public String getAdvancementName(ItemStack stack) {
+		return LibAdvancements.JINGWEIFEATHER;
 	}
+
 }
