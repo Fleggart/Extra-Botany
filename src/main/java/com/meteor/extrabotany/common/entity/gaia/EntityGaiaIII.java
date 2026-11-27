@@ -1,24 +1,31 @@
 package com.meteor.extrabotany.common.entity.gaia;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.*;
+import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
+
+import org.lwjgl.opengl.ARBShaderObjects;
 
 import com.google.common.base.Optional;
 import com.meteor.extrabotany.api.ExtraBotanyAPI;
 import com.meteor.extrabotany.api.entity.IEntityWithShield;
-import com.meteor.extrabotany.common.brew.ModPotions;
 import com.meteor.extrabotany.common.core.config.ConfigHandler;
 import com.meteor.extrabotany.common.core.handler.StatHandler;
 import com.meteor.extrabotany.common.item.ItemMaterial;
 import com.meteor.extrabotany.common.item.equipment.tool.ItemNatureOrb;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
@@ -51,16 +58,23 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.*;
+import net.minecraft.world.BossInfo;
+import net.minecraft.world.BossInfoServer;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.ARBShaderObjects;
 import vazkii.botania.api.boss.IBotaniaBoss;
 import vazkii.botania.api.internal.ShaderCallback;
 import vazkii.botania.api.state.BotaniaStateProps;
@@ -77,7 +91,7 @@ import vazkii.botania.common.network.PacketHandler;
 public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntityWithShield, IEntityAdditionalSpawnData {
 
 	public static final float ARENA_RANGE = 12F;
-	private static final float MAX_HP = 600F;
+	private static final float MAX_HP = 500F;
 
 	private static final String TAG_INVUL_TIME = "invulTime";
 	private static final String TAG_AGGRO = "aggro";
@@ -89,10 +103,7 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 	private static final String TAG_RANKIII = "rank3";
 	private static final String TAG_SHIELD = "shield";
 	private static final String TAG_HARDCORE = "hardcore";
-	private static final String TAG_DAMAGETAKEN = "damagetaken";
 
-	private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(EntityGaiaIII.class,
-			DataSerializers.FLOAT);
 	private static final DataParameter<Integer> INVUL_TIME = EntityDataManager.createKey(EntityGaiaIII.class,
 			DataSerializers.VARINT);
 	private static final DataParameter<Integer> SHIELD = EntityDataManager.createKey(EntityGaiaIII.class,
@@ -145,7 +156,7 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 
 	@Override
 	public void setHealth(float health) {
-		super.setHealth(Math.max(health, getHealth() - 30F));
+		super.setHealth(Math.max(health, getHealth() - 20F));
 	}
 
 	private void punish() {
@@ -229,8 +240,6 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 				clearPotions(player);
 				keepInsideArena(player);
 				player.capabilities.isFlying = player.capabilities.isFlying && player.capabilities.isCreativeMode;
-				int potionLevel = 0 + (getRankIII() ? 2 : 0) + this.ticksExisted >= 1800 ? 2 : 0;
-				player.addPotionEffect(new PotionEffect(ModPotions.witchcurse, 200, potionLevel));
 			}
 		}
 
@@ -307,7 +316,7 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 
 		if (cd == 0 && skillType == 0 && !getPlayersAround().isEmpty()) {
 			EntityPlayer player = getPlayersAround().get(world.rand.nextInt(getPlayersAround().size()));
-			float amplifier = StatHandler.hasStat(player, LibAdvancements.GAIA_DEFEAT_ID) ? 1.0F : 0.7F;
+			float amplifier = StatHandler.hasStat(player, LibAdvancements.GAIA_DEFEAT) ? 1.0F : 0.7F;
 			if (world.isRemote)
 				player.sendMessage(new TextComponentTranslation("extrabotanymisc.gaiaWarning3", "Boss")
 						.setStyle(new Style().setColor(TextFormatting.RED)));
@@ -336,12 +345,12 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 
 		if (tpDelay == 0 && getHealth() > 0) {
 			teleportRandomly();
-			tpDelay = getRankIII() ? 85 : 100;
+			tpDelay = getRankIII() ? 65 : 75;
 		}
 
 		if (ticksExisted > 2600)
 			for (EntityPlayer p : getPlayersAround())
-				ExtraBotanyAPI.unlockAdvancement(p, LibAdvancements.MUSIC_ALL_ID);
+				ExtraBotanyAPI.unlockAdvancement(p, LibAdvancements.MUSIC_ALL);
 
 	}
 
@@ -611,7 +620,6 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 		dataManager.register(RANKIII, false);
 		dataManager.register(HARDCORE, false);
 		dataManager.register(SHIELD, 0);
-		dataManager.register(DAMAGE_TAKEN, 0F);
 	}
 
 	public boolean getHardcore() {
@@ -641,61 +649,50 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 	public int getInvulTime() {
 		return dataManager.get(INVUL_TIME);
 	}
-	
-	public void setInvulTime(int time) {
-		dataManager.set(INVUL_TIME, time);
-	}
-	
-	public float getDamageTaken() {
-		return dataManager.get(DAMAGE_TAKEN);
-	}
-	
-	public void setDamageTaken(float time) {
-		dataManager.set(DAMAGE_TAKEN, time);
-	}
-
 
 	public BlockPos getSource() {
 		return source;
 	}
 
-	@Override
-	public void writeEntityToNBT(NBTTagCompound cmp) {
-		super.writeEntityToNBT(cmp);
-		cmp.setInteger(TAG_INVUL_TIME, getInvulTime());
-		cmp.setBoolean(TAG_AGGRO, aggro);
-
-		cmp.setInteger(TAG_SOURCE_X, source.getX());
-		cmp.setInteger(TAG_SOURCE_Y, source.getY());
-		cmp.setInteger(TAG_SOURCE_Z, source.getZ());
-
-		cmp.setInteger(TAG_PLAYER_COUNT, playerCount);
-		cmp.setInteger(TAG_SHIELD, getShield());
-		cmp.setBoolean(TAG_RANKII, getRankII());
-		cmp.setBoolean(TAG_RANKIII, getRankIII());
-		cmp.setFloat(TAG_DAMAGETAKEN, getDamageTaken());
+	public void setInvulTime(int time) {
+		dataManager.set(INVUL_TIME, time);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound cmp) {
-		super.readEntityFromNBT(cmp);
-		setInvulTime(cmp.getInteger(TAG_INVUL_TIME));
-		aggro = cmp.getBoolean(TAG_AGGRO);
+	public void writeEntityToNBT(NBTTagCompound par1nbtTagCompound) {
+		super.writeEntityToNBT(par1nbtTagCompound);
+		par1nbtTagCompound.setInteger(TAG_INVUL_TIME, getInvulTime());
+		par1nbtTagCompound.setBoolean(TAG_AGGRO, aggro);
 
-		int x = cmp.getInteger(TAG_SOURCE_X);
-		int y = cmp.getInteger(TAG_SOURCE_Y);
-		int z = cmp.getInteger(TAG_SOURCE_Z);
+		par1nbtTagCompound.setInteger(TAG_SOURCE_X, source.getX());
+		par1nbtTagCompound.setInteger(TAG_SOURCE_Y, source.getY());
+		par1nbtTagCompound.setInteger(TAG_SOURCE_Z, source.getZ());
+
+		par1nbtTagCompound.setInteger(TAG_PLAYER_COUNT, playerCount);
+		par1nbtTagCompound.setInteger(TAG_SHIELD, getShield());
+		par1nbtTagCompound.setBoolean(TAG_RANKII, getRankII());
+		par1nbtTagCompound.setBoolean(TAG_RANKIII, getRankIII());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound par1nbtTagCompound) {
+		super.readEntityFromNBT(par1nbtTagCompound);
+		setInvulTime(par1nbtTagCompound.getInteger(TAG_INVUL_TIME));
+		aggro = par1nbtTagCompound.getBoolean(TAG_AGGRO);
+
+		int x = par1nbtTagCompound.getInteger(TAG_SOURCE_X);
+		int y = par1nbtTagCompound.getInteger(TAG_SOURCE_Y);
+		int z = par1nbtTagCompound.getInteger(TAG_SOURCE_Z);
 		source = new BlockPos(x, y, z);
 
-		if (cmp.hasKey(TAG_PLAYER_COUNT))
-			playerCount = cmp.getInteger(TAG_PLAYER_COUNT);
+		if (par1nbtTagCompound.hasKey(TAG_PLAYER_COUNT))
+			playerCount = par1nbtTagCompound.getInteger(TAG_PLAYER_COUNT);
 		else
 			playerCount = 1;
 
 		if (this.hasCustomName()) {
 			this.bossInfo.setName(this.getDisplayName());
 		}
-		setDamageTaken(cmp.getFloat(TAG_DAMAGETAKEN));
 	}
 
 	@Override
@@ -730,17 +727,10 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 					getSource().getX(), getSource().getZ()) > ARENA_RANGE)
 				player.attemptTeleport(getSource().getX(), getSource().getY(), getSource().getZ());
 
-			int cap = 30;
-			
-			if (this.cd > 160)
-				this.cd -= 10;
+			int cap = 25;
 
-			this.setDamageTaken(getDamageTaken() + Math.min(cap, par2));
-			if(getDamageTaken() >= 80F) {
-				setDamageTaken(0);
+			if (getRankII() && Math.random() >= 0.25F)
 				teleportRandomly();
-				this.tpDelay = 80;
-			}
 
 			return super.attackEntityFrom(source, Math.min(cap, par2));
 		}
@@ -768,13 +758,13 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 		if (attacker != null) {
 			Vector3 thisVector = Vector3.fromEntityCenter(this);
 			Vector3 playerVector = Vector3.fromEntityCenter(attacker);
-			Vector3 motionVector = thisVector.subtract(playerVector).normalize().multiply(0.2);
+			Vector3 motionVector = thisVector.subtract(playerVector).normalize().multiply(0.75);
 
 			if (getHealth() > 0) {
 				motionX = -motionVector.x;
-				motionY = 0.25;
+				motionY = 0.5;
 				motionZ = -motionVector.z;
-				this.tpDelay = Math.max(this.tpDelay - 3,  0);
+				tpDelay = 4;
 			}
 		}
 	}
@@ -802,7 +792,7 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 
 	@Override
 	public ResourceLocation getLootTable() {
-		return new ResourceLocation(Reference.MOD_ID, "gaia_guardian_3");
+		return new ResourceLocation(LibMisc.MOD_ID, "gaia_guardian_3");
 	}
 
 	@Override
@@ -835,7 +825,7 @@ public class EntityGaiaIII extends EntityLiving implements IBotaniaBoss, IEntity
 			posY = player.posY;
 			posZ = player.posZ;
 			super.dropLoot(wasRecentlyHit, lootingModifier, DamageSource.causePlayerDamage(player));
-			ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.GAIA_DEFEAT_ID);
+			ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.GAIA_DEFEAT);
 			posX = savePosX;
 			posY = savePosY;
 			posZ = savePosZ;
