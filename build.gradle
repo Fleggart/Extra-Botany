@@ -35,6 +35,18 @@ minecraft {
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "OpenComputers"
+        url = "https://maven.cil.li/"
+    }
+
+    maven {
+        name = "ModMaven"
+        url = "https://modmaven.dev/"
+    }
+
+    
     maven {
         name = 'jared maven'
         url = 'https://maven.blamejared.com'
@@ -53,15 +65,7 @@ repositories {
     }
 
 
-    maven {
-        name "TehNut Maven"
-        url "https://maven.tehnut.info"
-    }
-
     
-    maven {
-        url = "http://maven.mcmoddev.com"
-    }
 }
 
 dependencies {
