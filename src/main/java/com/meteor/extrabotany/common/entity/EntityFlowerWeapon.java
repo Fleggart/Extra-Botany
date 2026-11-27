@@ -146,7 +146,7 @@ public class EntityFlowerWeapon extends EntityThrowableCopy {
 					if (living == thrower)
 						continue;
 
-					if (living.hurtResistantTime == 0) {
+					if (living.hurtTime == 0) {
 						switch (getVariety()) {
 						case 0:
 							living.attackEntityFrom(DamageSource.MAGIC, 9F);
