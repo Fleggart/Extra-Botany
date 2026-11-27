@@ -5,6 +5,7 @@ import com.meteor.extrabotany.api.subtile.SubTileGeneratingNature;
 import com.meteor.extrabotany.common.core.config.ConfigHandler;
 import com.meteor.extrabotany.common.lexicon.LexiconData;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,7 +58,7 @@ public class SubTileTinkle extends SubTileGeneratingNature{
 	            if(time >= limit){
 	            	if(mana < getMaxMana())
 	            		mana += Math.min(ConfigHandler.EFF_TINKLE + buff, getMaxMana() - mana);
-	                ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.TINKLE_USE_ID);
+	                ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.TINKLE_USE);
 	                player.addExhaustion(0.02F);
 	                time %= limit;
 	            }
