@@ -59,7 +59,7 @@ repositories {
     }
 
     
-    aven {
+    maven {
         url = "http://maven.mcmoddev.com"
     }
 }
