@@ -56,7 +56,6 @@ repositories {
     maven {
         name "TehNut Maven"
         url "https://maven.tehnut.info"
-        content { includeGroup "mcp.mobius.waila" }
     }
 
     
