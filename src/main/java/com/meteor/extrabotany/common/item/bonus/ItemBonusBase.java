@@ -3,6 +3,7 @@ package com.meteor.extrabotany.common.item.bonus;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
+
 import javax.annotation.Nonnull;
 
 import com.meteor.extrabotany.api.ExtraBotanyAPI;
@@ -10,6 +11,7 @@ import com.meteor.extrabotany.api.item.Bonus;
 import com.meteor.extrabotany.api.item.WeightCategory;
 import com.meteor.extrabotany.common.item.ItemMod;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -104,7 +106,7 @@ public class ItemBonusBase extends ItemMod {
 		for (WeightCategory wc : weightcategory) {
 			if (m <= n && n < m + wc.getWeight()) {
 				if (wc.getWeight() <= 1) {
-					ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.LUCKY_DRAW_ID);
+					ExtraBotanyAPI.unlockAdvancement(player, LibAdvancements.LUCKYDRAW);
 				}
 				return wc.getCategory();
 			}
