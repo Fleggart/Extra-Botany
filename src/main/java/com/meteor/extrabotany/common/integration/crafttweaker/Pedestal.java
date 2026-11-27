@@ -9,7 +9,7 @@ import com.blamejared.mtlib.utils.BaseListRemoval;
 import com.meteor.extrabotany.ExtraBotany;
 import com.meteor.extrabotany.api.ExtraBotanyAPI;
 import com.meteor.extrabotany.common.crafting.recipe.RecipePedestal;
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ModOnly;
@@ -20,7 +20,7 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.extrabotany.Pedestal")
-@ModOnly(Reference.MOD_ID)
+@ModOnly(LibMisc.MOD_ID)
 @ZenRegister
 public class Pedestal {
 	
