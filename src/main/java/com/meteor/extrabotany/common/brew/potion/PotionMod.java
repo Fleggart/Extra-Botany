@@ -1,6 +1,6 @@
 package com.meteor.extrabotany.common.brew.potion;
 
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -21,7 +21,7 @@ public class PotionMod extends Potion {
 
 	public PotionMod(String name, boolean badEffect, int color, int iconIndex) {
 		super(badEffect, color);
-		setRegistryName(new ResourceLocation(Reference.MOD_ID, name));
+		setRegistryName(new ResourceLocation(LibMisc.MOD_ID, name));
 		setPotionName("extrabotany.potion." + name);
 		this.iconIndex = iconIndex;
 	}
