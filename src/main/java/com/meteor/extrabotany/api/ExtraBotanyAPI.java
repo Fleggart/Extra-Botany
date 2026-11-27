@@ -12,12 +12,14 @@ import com.meteor.extrabotany.common.crafting.recipe.RecipeOmniviolet;
 import com.meteor.extrabotany.common.crafting.recipe.RecipePedestal;
 import com.meteor.extrabotany.common.crafting.recipe.RecipeStonesia;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -101,30 +103,14 @@ public class ExtraBotanyAPI {
 		return recipe;
 	}
 
-	@Deprecated
 	public static void unlockAdvancement(EntityPlayer player, String name) {
-		unlockAdvancement(player, new ResourceLocation(Reference.MOD_ID, LibAdvancements.PREFIX + name));
-	}
-
-	public static void unlockAdvancement(EntityPlayer player, ResourceLocation id) {
-		if (player instanceof EntityPlayerMP) {
-			AdvancementManager manager = ((WorldServer) player.getEntityWorld()).getAdvancementManager();
-			Advancement advancement = manager.getAdvancement(id);
-
-			if (advancement != null) {
-				unlockAdvancement(player, advancement);
-			}
-		}
-	}
-
-	public static void unlockAdvancement(EntityPlayer player, Advancement advancement) {
 		if (player instanceof EntityPlayerMP) {
 			PlayerAdvancements advancements = ((EntityPlayerMP) player).getAdvancements();
-
-			if (!advancements.getProgress(advancement).isDone()) {
-				//only grant criterion when not done, otherwise sponge will fire event causing item dupe.
+			AdvancementManager manager = ((WorldServer) player.getEntityWorld()).getAdvancementManager();
+			Advancement advancement = manager
+					.getAdvancement(new ResourceLocation(LibMisc.MOD_ID, LibAdvancements.PREFIX + name));
+			if (advancement != null)
 				advancements.grantCriterion(advancement, "ebt_trigger");
-			}
 		}
 	}
 
@@ -141,7 +127,7 @@ public class ExtraBotanyAPI {
 		if (target == null)
 			return result;
 		if (!(target instanceof EntityLivingBase))
-			return result; //this branch is impossible
+			return result;
 		if (!target.isEntityAlive())
 			return result;
 		if (amount < 0)
