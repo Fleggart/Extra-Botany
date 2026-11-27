@@ -2,6 +2,7 @@ package com.meteor.extrabotany.common.item.equipment.tool;
 
 import java.util.List;
 import java.util.Random;
+
 import javax.annotation.Nonnull;
 
 import com.meteor.extrabotany.api.ExtraBotanyAPI;
@@ -10,6 +11,7 @@ import com.meteor.extrabotany.common.item.ItemMod;
 import com.meteor.extrabotany.common.lib.LibAdvancements;
 import com.meteor.extrabotany.common.lib.LibBlocksName;
 import com.meteor.extrabotany.common.lib.LibItemsName;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -133,7 +135,7 @@ public class ItemKingGarden extends ItemMod implements IManaUsingItem {
 			if(weapon.getVariety() == 12){
 				weapon.playSound(com.meteor.extrabotany.common.core.handler.ModSounds.annoyingflower, 1F, 1F);
 				if(living instanceof EntityPlayer)
-					ExtraBotanyAPI.unlockAdvancement((EntityPlayer)living, LibAdvancements.ANNOYING_DOG_SUMMON_ID);
+					ExtraBotanyAPI.unlockAdvancement((EntityPlayer)living, LibAdvancements.ANNOYINGDOG_SUMMON);
 			}
 			setWeaponsSpawned(stack, spawned + 1);
 		}

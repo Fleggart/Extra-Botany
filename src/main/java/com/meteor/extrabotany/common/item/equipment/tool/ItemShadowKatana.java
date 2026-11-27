@@ -6,12 +6,13 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Multimap;
+import com.meteor.extrabotany.ExtraBotany;
 import com.meteor.extrabotany.ExtraBotanyCreativeTab;
 import com.meteor.extrabotany.client.render.IModelReg;
 import com.meteor.extrabotany.common.core.handler.DarkPixieHandler;
 import com.meteor.extrabotany.common.entity.EntityDarkPixie;
 import com.meteor.extrabotany.common.lib.LibItemsName;
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
@@ -40,7 +41,7 @@ public class ItemShadowKatana extends ItemSword implements IModelReg, IManaUsing
 	public ItemShadowKatana() {
 		super(BotaniaAPI.elementiumToolMaterial);
 		setCreativeTab(ExtraBotanyCreativeTab.INSTANCE);
-		setRegistryName(new ResourceLocation(Reference.MOD_ID, LibItemsName.SHADOWKATANA));
+		setRegistryName(new ResourceLocation(LibMisc.MOD_ID, LibItemsName.SHADOWKATANA));
 		setUnlocalizedName(LibItemsName.SHADOWKATANA);
 	}
 	
@@ -99,7 +100,7 @@ public class ItemShadowKatana extends ItemSword implements IModelReg, IManaUsing
 	@Nonnull
 	@Override
 	public String getUnlocalizedNameInefficiently(@Nonnull ItemStack par1ItemStack) {
-		return super.getUnlocalizedNameInefficiently(par1ItemStack).replaceAll("item\\.", "item." + Reference.MOD_ID + ":");
+		return super.getUnlocalizedNameInefficiently(par1ItemStack).replaceAll("item\\.", "item." + LibMisc.MOD_ID + ":");
 	}
 
 	@SideOnly(Side.CLIENT)
