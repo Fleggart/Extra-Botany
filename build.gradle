@@ -51,7 +51,16 @@ repositories {
         name = "cursemaven"
         url = "https://cursemaven.com"
     }
+
+
     maven {
+        name "TehNut Maven"
+        url "https://maven.tehnut.info"
+        content { includeGroup "mcp.mobius.waila" }
+    }
+
+    
+    aven {
         url = "http://maven.mcmoddev.com"
     }
 }
@@ -61,6 +70,7 @@ dependencies {
 
     compile 'mezz.jei:jei_1.12.2:4.16.1.301'
     compile "mcp.mobius.waila:Hwyla:1.8.26-B41_1.12.2:api"
+    
     compile 'mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.28-17'
 
     compile 'CraftTweaker2:CraftTweaker2-API:4.1.20.670'
