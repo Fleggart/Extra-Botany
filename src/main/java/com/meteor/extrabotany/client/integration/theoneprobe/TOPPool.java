@@ -1,6 +1,6 @@
 package com.meteor.extrabotany.client.integration.theoneprobe;
 
-import com.meteor.extrabotany.common.lib.Reference;
+import com.meteor.extrabotany.common.lib.LibMisc;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -23,7 +23,7 @@ public class TOPPool implements IProbeInfoProvider{
 	
 	@Override
     public String getID(){
-        return Reference.MOD_ID + ".pool";
+        return LibMisc.MOD_ID + ".pool";
     }
 	
 }
