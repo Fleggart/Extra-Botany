@@ -18,7 +18,6 @@ import com.meteor.extrabotany.client.render.entity.RenderDarkPixie;
 import com.meteor.extrabotany.client.render.entity.RenderFlowerWeapon;
 import com.meteor.extrabotany.client.render.entity.RenderFlyingBoat;
 import com.meteor.extrabotany.client.render.entity.RenderMagicArrow;
-import com.meteor.extrabotany.client.render.entity.RenderPhantomSword;
 import com.meteor.extrabotany.client.render.entity.RenderSplashGrenade;
 import com.meteor.extrabotany.client.render.entity.RenderSubspace;
 import com.meteor.extrabotany.client.render.entity.RenderSubspaceSpear;
@@ -50,7 +49,6 @@ import com.meteor.extrabotany.common.entity.EntityDarkPixie;
 import com.meteor.extrabotany.common.entity.EntityFlowerWeapon;
 import com.meteor.extrabotany.common.entity.EntityFlyingBoat;
 import com.meteor.extrabotany.common.entity.EntityMagicArrow;
-import com.meteor.extrabotany.common.entity.EntityPhantomSword;
 import com.meteor.extrabotany.common.entity.EntitySplashGrenade;
 import com.meteor.extrabotany.common.entity.EntitySubspace;
 import com.meteor.extrabotany.common.entity.EntitySubspaceSpear;
@@ -156,7 +154,6 @@ public class ClientProxy extends CommonProxy{
 		RenderingRegistry.registerEntityRenderingHandler(EntityVoid.class, RenderVoid::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityVoidHerrscher.class, RenderVoidHerrscher::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySubspaceLance.class, RenderSubspaceLance::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityPhantomSword.class, RenderPhantomSword::new);
 	}
 	
     @Override
